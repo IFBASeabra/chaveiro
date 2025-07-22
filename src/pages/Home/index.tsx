@@ -1,4 +1,4 @@
-import Container from "@/components/layout/Container"
+import Container from "@/components/layout/container"
 import { HomeIcon } from "lucide-react"
 
 const Home = () => {

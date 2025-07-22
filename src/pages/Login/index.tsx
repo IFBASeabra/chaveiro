@@ -3,7 +3,7 @@ import { LogIn } from "lucide-react"
 
 const Login = () => {
   return (
-    <Container >
+    <Container>
       <LogIn /> Login
     </Container>
   )
