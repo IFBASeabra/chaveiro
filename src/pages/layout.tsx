@@ -1,10 +1,13 @@
-import { HomeIcon, LogIn } from "lucide-react"
+import { HomeIcon, LogIn, LogOut, User2Icon } from "lucide-react"
 import { NavLink, Outlet } from "react-router"
 
 import Logo from "@/assets/Logo"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/hooks/useAuth"
 
 const Layout = () => {
+  const {session, logout} = useAuth()
+
   return (
     <main className="flex flex-col">
       <header className="flex items-center justify-between gap-6 py-4 px-8 border">
@@ -15,9 +18,22 @@ const Layout = () => {
               <HomeIcon size={18} /> Home
             </Button>
           </NavLink>
-          <NavLink to="login" className="flex gap-2 items-center">
+          {
+            session ? 
+            <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
+                <User2Icon />
+                {session.user.email}
+              </div>
+              <Button onClick={logout}>
+                <LogOut />
+                Sair
+              </Button>
+            </div>
+            :
+            <NavLink to="login" className="flex gap-2 items-center">
             <LogIn size={18} /> Login
-          </NavLink>
+          </NavLink>}
         </nav>
       </header>
       <Outlet />

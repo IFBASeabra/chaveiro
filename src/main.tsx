@@ -11,25 +11,29 @@ import AdminLayout from './pages/admin/layout';
 import Admin from './pages/admin';
 import Layout from './pages/layout';
 
+import AuthProvider from './contexts/AuthContext';
+
 import './index.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>  
-        <Route path="/" element={<Layout />}>
-          <Route index path="/" element={<Home />} />
-          <Route index path="home" element={<Home />} />
+      <AuthProvider>
+        <Routes>
           <Route path="login" element={<Login />} />
-          <Route path="admin" element={<AdminLayout />}>
-            <Route index element={<Admin />} />
-            <Route path="users" element={<UsersLayout />}>
-              <Route index element={<User />} />
-              <Route path="new" element={<NewUser />} />
+          <Route path="/" element={<Layout />}>
+            <Route index path="/" element={<Home />} />
+            <Route index path="home" element={<Home />} />
+            <Route path="admin" element={<AdminLayout />}>
+              <Route index element={<Admin />} />
+              <Route path="users" element={<UsersLayout />}>
+                <Route index element={<User />} />
+                <Route path="new" element={<NewUser />} />
+              </Route>
             </Route>
           </Route>
-        </Route>
-      </Routes>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>,
 )
