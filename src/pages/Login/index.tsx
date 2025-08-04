@@ -5,10 +5,11 @@ import Container from "@/components/layout/container"
 import { loginSchema, type loginSchemaType } from "@/schemas/user"
 import FormField from '@/components/form/FormField'
 import { Button } from '@/components/ui/button'
-import { Link, useParams } from 'react-router'
-import { LogIn } from 'lucide-react'
-import { useState } from 'react'
+import { Link, useNavigate } from 'react-router'
+import { InfoIcon, LogIn } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { Alert } from '@/components/ui/alert'
 
 const Login = () => {
   const {
@@ -18,23 +19,40 @@ const Login = () => {
   } = useForm<loginSchemaType>({
     resolver: zodResolver(loginSchema)
   })
-  const params = useParams()
 
-  console.log('params: ', params)
+  const navigate = useNavigate()
 
+  const [loginError, setLoginError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const {login} = useAuth()
+  const {login, session} = useAuth()
 
   const forgotPassword = (e: React.MouseEvent) => {
     e.preventDefault()
   }
 
+  useEffect(() => {
+    if (session) {
+      window.location.href = "/admin"
+    }
+  }, [session])
+
   const submitLogin = async (data: loginSchemaType) => {
-    console.log('data: ', data)
     setLoading(true)
     try {
-      await login(data)
+      const {success, error} = await login(data)
+
+      if (!success) {
+        if (error) {
+          setLoginError("Usuário e/ou senha inválido(s). Verifique as credenciais e tente novamente.")
+        } else {
+          setLoginError('Houve um problema com o login. Tente novamente em alguns instantes')
+        }
+      } else {
+        navigate("/admin")
+      }
+      
+
     } catch (e) {
       console.error('Houve um erro ao tentar logar', e)
     } finally {
@@ -75,13 +93,13 @@ const Login = () => {
             </Button>
           </div>
           {
-            // error &&
-            // <Alert variant="destructive">
-            //   <InfoIcon />
-            //   {
-            //     error
-            //   }
-            // </Alert>
+            loginError &&
+            <Alert variant="destructive">
+              <InfoIcon />
+              {
+                loginError
+              }
+            </Alert>
           }
       </form>
     </Container>

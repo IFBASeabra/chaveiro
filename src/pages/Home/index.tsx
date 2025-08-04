@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/c
 import { Skeleton } from "@/components/ui/skeleton"
 import supabase from "@/lib/supabase"
 import type { Room } from "@/types/rooms"
-import { R } from "node_modules/react-router/dist/development/index-react-server-client-CUidsuu_.d.mts"
 import { useEffect, useState } from "react"
 
 const Home = () => {

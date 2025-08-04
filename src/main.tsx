@@ -9,6 +9,8 @@ import User from './pages/admin/users';
 import NewUser from './pages/admin/users/new';
 import AdminLayout from './pages/admin/layout';
 import Admin from './pages/admin';
+import Rooms from './pages/admin/rooms';
+import NewRoom from './pages/admin/rooms/new';
 import Layout from './pages/layout';
 
 import AuthProvider from './contexts/AuthContext';
@@ -30,10 +32,14 @@ createRoot(document.getElementById('root')!).render(
                 <Route index element={<User />} />
                 <Route path="new" element={<NewUser />} />
               </Route>
+              <Route path="rooms" element={<Rooms />}>
+                <Route index element={<Rooms />} />
+                <Route path="new" element={<NewRoom />} />
+              </Route>
             </Route>
           </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 )

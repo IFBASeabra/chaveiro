@@ -1,11 +1,15 @@
 import supabase from '@/lib/supabase'
 import type { loginSchemaType } from '@/schemas/user'
-import type { Session } from '@supabase/supabase-js'
+import type { AuthError, Session } from '@supabase/supabase-js'
 import { createContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
+interface LoginResponse {
+  success: boolean
+  error: AuthError | null
+}
 interface AuthContextType {
-  login: (data: loginSchemaType) => Promise<void>
+  login: (data: loginSchemaType) => Promise<LoginResponse>
   logout: () => void
   session: Session | null
   loading: boolean
@@ -23,9 +27,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const checkAuth = async () => {
       setLoading(true)
       try {
-        await supabase.auth.getSession().then(({ data: { session } }) => {
-          setSession(session)
-        })
+        const {data: {session}} = await supabase.auth.getSession()
+      
+        setSession(session)
+        
         const {
           data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -50,13 +55,18 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       password
     })
 
+    console.log('auth error: ', error)
+
     if (error) {
-      return navigate(`/login`)
+      return {success: false, error}
     }
 
     setSession(data.session)
 
-    navigate(`/admin`)
+    return {
+      success: true, 
+      error: null
+    }
   }
 
   const logout = async () => {
