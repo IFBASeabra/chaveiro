@@ -32,8 +32,9 @@ const Layout = () => {
             </div>
             :
             <NavLink to="login" className="flex gap-2 items-center">
-            <LogIn size={18} /> Login
-          </NavLink>}
+              <LogIn size={18} /> Login
+            </NavLink>
+          }
         </nav>
       </header>
       <Outlet />

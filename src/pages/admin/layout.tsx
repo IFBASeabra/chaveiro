@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/useAuth'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { Blocks, BlocksIcon, HousePlusIcon, Users } from 'lucide-react'
-import { BlockList } from 'net'
 import { Link, Outlet, useNavigate } from 'react-router'
 
 const AdminLayout = () => {

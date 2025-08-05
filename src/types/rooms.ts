@@ -1,7 +1,7 @@
 import type { Database } from "./supabase"
 
 export interface Room {
-  id?: number
+  id: number
   name: string
   location: Database["public"]["Enums"]["location"]
   number: string
