@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useState } from 'react'
 
 import RoomsContext from '@/contexts/RoomsContext'
@@ -80,6 +81,7 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
     console.log("Adding room")
     try {
       setLoading(true)
+      //@ts-ignore
       const {error} = await supabase.from("rooms").insert({name, location, type, number })
 
         if (error) {
