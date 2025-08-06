@@ -1,21 +1,12 @@
-import supabase from '@/lib/supabase'
-import type { loginSchemaType } from '@/schemas/user'
-import type { AuthError, Session } from '@supabase/supabase-js'
-import { createContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
-interface LoginResponse {
-  success: boolean
-  error: AuthError | null
-}
-interface AuthContextType {
-  login: (data: loginSchemaType) => Promise<LoginResponse>
-  logout: () => void
-  session: Session | null
-  loading: boolean
-}
+import AuthContext from '@/contexts/AuthContext'
+import supabase from '@/lib/supabase'
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined)
+import type { Session } from '@supabase/supabase-js'
+import type { loginSchemaType } from '@/schemas/user'
+
 
 const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<Session | null>(null)
@@ -23,30 +14,31 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const navigate = useNavigate()
 
   useEffect(() => {
+    let unsubscribe: () => void
 
     const checkAuth = async () => {
       setLoading(true)
       try {
-        const {data: {session}} = await supabase.auth.getSession()
-      
+        const { data: { session } } = await supabase.auth.getSession()
         setSession(session)
-        
-        const {
-          data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
           setSession(session)
         })
-        
-        return () => subscription.unsubscribe()
 
-      } catch (e) {
-        console.error('There was an error while retrieving the session', e)
+        unsubscribe = subscription.unsubscribe
+      } catch (error) {
+        console.error("Erro ao recuperar sessão:", error)
       } finally {
         setLoading(false)
       }
     }
 
     checkAuth()
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
   }, [])
 
   const login = async ({ email, password }: loginSchemaType) => {
@@ -58,13 +50,13 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     console.log('auth error: ', error)
 
     if (error) {
-      return {success: false, error}
+      return { success: false, error }
     }
 
     setSession(data.session)
 
     return {
-      success: true, 
+      success: true,
       error: null
     }
   }

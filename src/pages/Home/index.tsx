@@ -6,43 +6,31 @@ import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/c
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useAuth } from "@/hooks/useAuth"
+import { useRooms } from "@/hooks/useRooms"
 import supabase from "@/lib/supabase"
 import type { Room } from "@/types/rooms"
-import React, { useEffect, useState } from "react"
+import React, { useMemo, useState } from "react"
 
 const Home = () => {
-  const [rooms, setRooms] = useState<Record<string, Room[]> | undefined>(undefined)
-  const [loadingError, setLoadingError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  const {rooms, fetchError, loading} = useRooms()
   const [activeRoom, setActiveRoom] = useState<Room | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [allowedUser, setAllowedUser] = useState("")
   const { session } = useAuth()
 
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const { data, error } = await supabase.from("rooms").select("id, name, number, type, location, allowed_users(user)");
-        if (error) {
-          setLoadingError(error.message)
-        }
-
-        const groupedByLocation = data?.reduce((acc, room) => {
+  const roomList = useMemo(() => {
+        return rooms?.reduce((acc, room) => {
           const loc = room.location || "unknown";
           if (!acc[loc]) acc[loc] = [];
           acc[loc].push(room);
           return acc;
-        }, {} as Record<string, typeof data>);
-        setRooms(groupedByLocation)
-      } catch (e) {
-        console.error('Houve um erro ao processar a requisição.', e)
-      }
-      finally {
-        setLoading(false)
-      }
-    }
-    fetchRooms()
-  }, [])
+        }, {} as Record<string, typeof rooms>);
+  }, [rooms])
+
+
+  console.log('rooms: ', rooms)
+  console.log('roomList: ', roomList)
+  console.log('loading: ', loading)
 
   const permitirAcesso = () => {
     setShowForm(true)
@@ -53,7 +41,6 @@ const Home = () => {
 
     console.log('activeRoom: ', activeRoom)
 
-    setLoading(true)
     try {
       const {data, error} = await supabase.from("allowed_users").insert({room: activeRoom!.id, user: allowedUser})
       
@@ -65,13 +52,12 @@ const Home = () => {
     } finally {
       setShowForm(false)
       setAllowedUser("")
-      setLoading(false)
     }
   }
 
-  if (loadingError) {
+  if (fetchError) {
 
-    console.error('A página não pode ser carregada devido a um erro: ', loadingError)
+    console.error('A página não pode ser carregada devido a um erro: ', fetchError)
     return <>A página não pode ser carregada devido a um erro. Tente novamente mais tarde</>
   }
 
@@ -83,15 +69,16 @@ const Home = () => {
     <Container >
       <div className="flex flex-col w-full flex-wrap">
         {
-          rooms ?
-            Object.entries(rooms)
+          roomList ?
+            Object.entries(roomList)
               .map(
                 ([location, rooms]) =>
-                  <div className="py-2">
+                  <div className="py-2" key={location}>
                     <h2 className="text-2xl mb-6">{location}</h2>
                     <div className="flex flex-wrap gap-4">
                       {rooms?.sort((a, b) => Number(a.number) - Number(b.number))?.map((room) =>
                         <div
+                          key={room.id}
                           role="button"
                           className="p-4 border-2 flex flex-auto max-w-28 items-center justify-center cursor-pointer rounded-sm flex-col"
                           onClick={() => setActiveRoom(room)}
