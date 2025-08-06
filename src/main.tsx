@@ -17,6 +17,7 @@ import Layout from './pages/layout';
 
 import './index.css'
 import RoomsProvider from './providers/RoomsProvider';
+import Room from './pages/room';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -28,6 +29,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route index path="home" element={<Home />} />
+              <Route path="rooms/:id" element={<Room />} />
               <Route path="admin" element={<AdminLayout />}>
                 <Route index element={<Admin />} />
                 <Route path="users" element={<UsersLayout />}>

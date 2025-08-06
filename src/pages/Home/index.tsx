@@ -10,6 +10,7 @@ import { useRooms } from "@/hooks/useRooms"
 import supabase from "@/lib/supabase"
 import type { Room } from "@/types/rooms"
 import React, { useMemo, useState } from "react"
+import { Link } from "react-router"
 
 const Home = () => {
   const {rooms, fetchError, loading} = useRooms()
@@ -77,7 +78,8 @@ const Home = () => {
                     <h2 className="text-2xl mb-6">{location}</h2>
                     <div className="flex flex-wrap gap-4">
                       {rooms?.sort((a, b) => Number(a.number) - Number(b.number))?.map((room) =>
-                        <div
+                        <Link
+                          to={`/rooms/${room.id}`}
                           key={room.id}
                           role="button"
                           className="p-4 border-2 flex flex-auto max-w-28 items-center justify-center cursor-pointer rounded-sm flex-col"
@@ -89,7 +91,7 @@ const Home = () => {
                           <p className="text-sm text-center">
                             {room.name}
                           </p>
-                        </div>
+                        </Link>
                       )}
                     </div>
                   </div>
