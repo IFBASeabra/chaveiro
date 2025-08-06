@@ -10,7 +10,7 @@ interface FormFieldType {
   id: string
   title?: string
   placeholder?: string
-  type?: "text" | "email" | "password"
+  type?: "text" | "email" | "password" | "date"
   error?: ErrorOption
   register?: UseFormRegister<FieldValues>
   required?: boolean

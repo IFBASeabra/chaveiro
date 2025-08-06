@@ -13,5 +13,11 @@ export const registerSchema = z.object({
 //Usando a função omit, eu posso reaproveitar o schema de cadastro para o login, removendo (omitindo) os campos que não são necessários nesse cenário.
 export const loginSchema = registerSchema.omit({confirm: true})
 
+export const allowedUserSchema = z.object({
+  user: z.string().regex(/[A-Z][a-z].* [A-Z][a-z].*/, {message: "Forneça nome e sobrenome"}),
+  valid_until: z.string().optional()
+})
+
 export type loginSchemaType = z.infer<typeof loginSchema>
 export type registerSchemaType = z.infer<typeof registerSchema>
+export type allowedUserType = z.infer<typeof allowedUserSchema>

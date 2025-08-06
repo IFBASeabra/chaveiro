@@ -117,4 +117,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .default-form{ 
+    @apply flex flex-col gap-4 w-full md:max-w-1/3
+  }
 }

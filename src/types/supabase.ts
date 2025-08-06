@@ -20,18 +20,21 @@ export type Database = {
           id: number
           room: number
           user: string
+          valid_until: string | null
         }
         Insert: {
           created_at?: string
           id?: number
           room: number
           user: string
+          valid_until?: string | null
         }
         Update: {
           created_at?: string
           id?: number
           room?: number
           user?: string
+          valid_until?: string | null
         }
         Relationships: [
           {
