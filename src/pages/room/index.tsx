@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { Info, InfoIcon } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import Container from '@/components/layout/_temp'
+import Container from '@/components/layout/container'
 import { Alert } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'

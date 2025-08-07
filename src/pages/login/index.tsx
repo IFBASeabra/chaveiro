@@ -1,6 +1,6 @@
 import {useForm} from 'react-hook-form'
 import {zodResolver} from '@hookform/resolvers/zod'
-import Container from "@/components/layout/_temp"
+import Container from "@/components/layout/container"
 
 import { loginSchema, type loginSchemaType } from "@/schemas/user"
 import FormField from '@/components/form/FormField'

@@ -1,4 +1,4 @@
-import Container from '@/components/layout/_temp'
+import Container from '@/components/layout/container'
 import Loading from '@/components/layout/loading'
 import { useAuth } from '@/hooks/useAuth'
 import {  Outlet, useNavigate } from 'react-router'
