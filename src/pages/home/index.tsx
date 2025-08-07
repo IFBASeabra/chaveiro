@@ -1,4 +1,4 @@
-import Container from "@/components/layout/container"
+import Container from "@/components/layout/_temp"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useAuth } from "@/hooks/useAuth"
 import { useRooms } from "@/hooks/useRooms"
