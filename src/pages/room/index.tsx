@@ -22,9 +22,11 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from '@radix-ui/react-label'
 
 import style from "./styles.module.css"
+import { useAuth } from '@/hooks/useAuth'
 
 const Room = () => {
   const { id } = useParams()
+  const {session} = useAuth()
   const { rooms, addUser, loading } = useRooms()
   const [showModal, setShowModal] = useState(false)
   const [isTemp, setIsTemp] = useState(false)
@@ -90,9 +92,9 @@ const Room = () => {
             <h1 className="text-2xl font-semibold flex gap-2 items-center">
               <Badge className='text-2xl'>{activeRoom?.number}</Badge>{activeRoom?.name}
             </h1>
-            <Button onClick={() => { setShowModal(true) }}>
+            {session && <Button onClick={() => { setShowModal(true) }}>
               Adicionar usuário
-            </Button>
+            </Button>}
           </div>
           {activeRoom.allowed_users?.length > 0 ?
 
