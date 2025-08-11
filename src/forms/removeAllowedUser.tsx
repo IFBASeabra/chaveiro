@@ -29,7 +29,7 @@ const RemoveAllowedUser = ({id, activeRoom, close }: { id: number, activeRoom: R
       <h2>Tem certeza que deseja remover o usuário {user.user}?</h2>
       <div className="flex items-center gap-2">
         <Button onClick={handleRemove} variant={"destructive"}>{loading ? "Aguarde..." : "Sim"}</Button>
-        <Button onClick={() => console.log('fechar')} variant={"ghost"}>Não</Button>
+        <Button onClick={close} variant={"ghost"}>Não</Button>
       </div>
     </div>
   )

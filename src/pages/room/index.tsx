@@ -17,6 +17,7 @@ import style from "./styles.module.css"
 import AllowUserToRoom from '@/forms/allowUserToRoom'
 import EditAllowedUser from '@/forms/editAllowedUser'
 import RemoveAllowedUser from '@/forms/removeAllowedUser'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 
 type activeFormType = "newUser" | "editUser" | "removeUser" | undefined
 
@@ -78,7 +79,7 @@ const Room = () => {
       </Breadcrumb>
       <Container align='flex-start'>
         <div className="flex flex-col items-center gap-4 mt-12">
-          <div className="flex justify-between w-full">
+          <div className="flex flex-col md:flex-row gap-4 justify-between w-full">
             <h1 className="text-2xl font-semibold flex gap-2 items-center">
               <Badge className='text-2xl'>{activeRoom?.number}</Badge>{activeRoom?.name}
             </h1>
@@ -88,24 +89,24 @@ const Room = () => {
           </div>
           {activeRoom.allowed_users?.length > 0 ?
 
-            <table className="table-fixed w-full text-black">
-              <thead className="text-md text-left text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 py-2">
-                <tr>
-                  <th colSpan={2} className="py-4 text-center text-2xl">Pessoas autorizadas</th>
-                </tr>
-                <tr>
-                  <th className={style.celula}>Nome</th>
-                  <th className={style.celula}>Validade</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Table>
+              <TableHeader className="text-md text-left text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 py-2">
+                <TableRow>
+                  <TableHead colSpan={2} className="py-4 text-center text-2xl">Pessoas autorizadas</TableHead>
+                </TableRow>
+                <TableRow>
+                  <TableHead className={style.celula}>Nome</TableHead>
+                  <TableHead className={style.celula}>Validade</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {
                   activeRoom.allowed_users?.map(({ id, user, valid_until }) =>
-                    <tr className="bg-white border-b group dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 group">
-                      <td className={style.tableItem}>
+                    <TableRow className="bg-white border-b group dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 group">
+                      <TableCell className={style.tableItem}>
                         {user}
-                      </td>
-                      <td className={`${style.tableItem} relative`}>
+                      </TableCell>
+                      <TableCell className={`${style.tableItem} relative`}>
                         {valid_until ? <FormattedDate date={valid_until} /> : "Indeterminada"}
 
                         {session &&
@@ -117,12 +118,12 @@ const Room = () => {
                               <Trash2Icon />
                             </Button>
                           </div>}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   )
                 }
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
             :
             <div className="w-full md:max-w-1/2 flex items-center justify-center py-10">
               <Alert variant="destructive">

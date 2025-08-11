@@ -5,5 +5,5 @@
 }
 
 .tableItem {
-  @apply px-6 py-4 font-medium text-[16px] text-gray-900 whitespace-nowrap
+  @apply px-6 py-4 font-medium text-[16px] text-gray-900 whitespace-nowrap break-all
 }
