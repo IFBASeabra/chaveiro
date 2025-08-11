@@ -1,54 +1,44 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { useForm } from 'react-hook-form'
-import { Info, InfoIcon } from 'lucide-react'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { EditIcon, Info, InfoIcon, Trash2Icon } from 'lucide-react'
 
 import Container from '@/components/layout/container'
 import { Alert } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
-
-
 import FormattedDate from '@/components/layout/formattedDate'
-import FormField from '@/components/form/FormField'
 import Modal from '@/components/layout/modal'
 
+import { useAuth } from '@/hooks/useAuth'
 import { useRooms } from '@/hooks/useRooms'
 
-import { allowedUserSchema, type allowedUserType } from '@/schemas/user'
-import { Switch } from "@/components/ui/switch"
-import { Label } from '@radix-ui/react-label'
-
 import style from "./styles.module.css"
-import { useAuth } from '@/hooks/useAuth'
+import AllowUserToRoom from '@/forms/allowUserToRoom'
+import EditAllowedUser from '@/forms/editAllowedUser'
+import RemoveAllowedUser from '@/forms/removeAllowedUser'
+
+type activeFormType = "newUser" | "editUser" | "removeUser" | undefined
 
 const Room = () => {
   const { id } = useParams()
-  const {session} = useAuth()
-  const { rooms, addUser, loading } = useRooms()
-  const [showModal, setShowModal] = useState(false)
-  const [isTemp, setIsTemp] = useState(false)
-  const [status, setStatus] = useState({
-    success: false,
-    message: ""
-  })
-
-  const {
-    handleSubmit,
-    register,
-    formState: { errors }
-  } = useForm<allowedUserType>({
-    resolver: zodResolver(allowedUserSchema)
-  })
-
-  const addNewUser = async (data: allowedUserType) => {
-    const result = await addUser(activeRoom!.id, data.user, isTemp ? `${data.valid_until}` : undefined)
-    setStatus(result)
-  }
+  const { session } = useAuth()
+  const { rooms, loading } = useRooms()
+  const [activeForm, setActiveForm] = useState<activeFormType>(undefined)
+  const [activeUser, setActiveUser] = useState<number>(0)
 
   const activeRoom = useMemo(() => rooms?.find(room => room.id === Number(id)), [id, rooms])
+
+  const close = () => {
+    setActiveForm(undefined)
+  }
+
+  const ActiveForms = {
+    "newUser": () => <AllowUserToRoom activeRoom={activeRoom!} close={close} />,
+    "editUser": () => <EditAllowedUser userId={activeUser} activeRoom={activeRoom!} close={close} />,
+    "removeUser": () => <RemoveAllowedUser id={activeUser} activeRoom={activeRoom!} close={close} />
+  }
+
 
   if (loading) {
     return <>Carregando...</>
@@ -92,7 +82,7 @@ const Room = () => {
             <h1 className="text-2xl font-semibold flex gap-2 items-center">
               <Badge className='text-2xl'>{activeRoom?.number}</Badge>{activeRoom?.name}
             </h1>
-            {session && <Button onClick={() => { setShowModal(true) }}>
+            {session && <Button onClick={() => { setActiveForm("newUser") }}>
               Adicionar usuário
             </Button>}
           </div>
@@ -110,13 +100,23 @@ const Room = () => {
               </thead>
               <tbody>
                 {
-                  activeRoom.allowed_users?.map(({ user, valid_until }) =>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 group">
+                  activeRoom.allowed_users?.map(({ id, user, valid_until }) =>
+                    <tr className="bg-white border-b group dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 group">
                       <td className={style.tableItem}>
                         {user}
                       </td>
-                      <td className={style.tableItem}>
+                      <td className={`${style.tableItem} relative`}>
                         {valid_until ? <FormattedDate date={valid_until} /> : "Indeterminada"}
+
+                        {session &&
+                          <div className="invisible group-hover:visible absolute top-0 bottom-0 right-0 mx-auto flex items-center justify-end gap-2">
+                            <Button onClick={() => {setActiveUser(id); setActiveForm("editUser")}}>
+                              <EditIcon />
+                            </Button>
+                            <Button onClick={() => {setActiveUser(id); setActiveForm("removeUser")}}>
+                              <Trash2Icon />
+                            </Button>
+                          </div>}
                       </td>
                     </tr>
                   )
@@ -135,25 +135,10 @@ const Room = () => {
 
       </Container>
 
-      {showModal &&
-        <Modal onClick={() => { setShowModal(false) }}>
+      {activeForm &&
+        <Modal onClick={() => { setActiveForm(undefined) }}>
           <div className="p-4 bg-white w-full md:max-w-1/2" onClick={(e) => e.stopPropagation()}>
-            <form onSubmit={handleSubmit(addNewUser)} className="flex flex-col gap-6">
-              <FormField title="Nome Completo do Usuário" id="user" {...register('user')} error={errors.user} />
-              <div className="flex items-center gap-4 cursor-pointer">
-                <Switch id="isTemp" checked={isTemp} onCheckedChange={() => { setIsTemp(!isTemp) }} />
-                <Label htmlFor="isTemp">Liberação temporária</Label>
-              </div>
-              {isTemp && <FormField title="Liberado até" type="date" id="valid_until" {...register("valid_until")} error={errors.valid_until} />}
-              <Button type="submit" disabled={loading}>{loading ? "Aguarde..." : "Cadastrar"}</Button>
-            </form>
-            {
-              (!loading && status.message) &&
-              <Alert variant={status.success ? "default" : "destructive"} className='mt-4'>
-                <InfoIcon />
-                {status.message}
-              </Alert>
-            }
+            {ActiveForms[activeForm]()}
           </div>
         </Modal>}
     </>

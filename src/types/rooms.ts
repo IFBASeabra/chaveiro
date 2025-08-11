@@ -10,6 +10,7 @@ export interface RoomsContextType {
   rooms: Room[] | null
   getRooms: () => Promise<void>
   addUser: (roomId: number, user: string, valid_until?: string) => Promise<SupabaseResponse>
+  updateUser: (id: number, user: string, valid_until?: string) => Promise<SupabaseResponse>
   addRoom: (data: RoomSchemaType) => Promise<SupabaseResponse>
   removeUser: (id: number) => Promise<SupabaseResponse>
   loading: boolean
@@ -23,6 +24,7 @@ export interface Room {
   number: string
   type: Database["public"]["Enums"]["room_type"]
   allowed_users: {
+    id: number
     user: string
     valid_until?: string | null
   }[]

@@ -21,3 +21,9 @@ export const allowedUserSchema = z.object({
 export type loginSchemaType = z.infer<typeof loginSchema>
 export type registerSchemaType = z.infer<typeof registerSchema>
 export type allowedUserType = z.infer<typeof allowedUserSchema>
+
+export  interface AllowedUser {
+  id: number
+  user: string
+  valid_until?: string | null
+}

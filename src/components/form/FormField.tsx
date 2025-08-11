@@ -14,6 +14,7 @@ interface FormFieldType {
   error?: ErrorOption
   register?: UseFormRegister<FieldValues>
   required?: boolean
+  defaultValue?: string | null
 }
 
 const FormField: React.FC<FormFieldType> = ({
@@ -23,6 +24,7 @@ const FormField: React.FC<FormFieldType> = ({
   error,
   type = "text",
   required = false,
+  defaultValue,
   ...props
 }) => {
   return (
@@ -38,6 +40,7 @@ const FormField: React.FC<FormFieldType> = ({
         placeholder={placeholder}
         type={type}
         required={required}
+        defaultValue={defaultValue}
         {...props}
       />
       {

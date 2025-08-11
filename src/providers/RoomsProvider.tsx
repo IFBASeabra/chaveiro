@@ -54,6 +54,40 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+  const updateUser = async (id: number, user: string, valid_until: string | null = null) => {
+
+    try {
+      const { data, error } = await supabase.from("allowed_users").update({user: user, valid_until: valid_until }).eq("id", id).select()
+
+      console.log('id: ', id)
+      console.log('data: ', data)
+      console.log('error: ', error)
+
+      if (error) {
+        console.error("Houve um erro ao atualizar o usuário: ", error)
+
+        return {
+          success: false,
+          message: `Houve um erro ao atualizar o usuário: ${JSON.stringify(error)}`
+        }
+      }
+
+      await getRooms()
+
+      return {
+        success: true,
+        message: `Dados atualizados com sucesso`
+      }
+
+    } catch (e) {
+      console.error("Houve um erro ao tentar atualizar o usuário", e)
+      return {
+        success: false,
+        message: `Houve um erro ao tentar atualizar o usuário. ${JSON.stringify(e)}`
+      }
+    }
+  }
+
   const removeUser = async (id: number) => {
     try {
       const { error } = await supabase.from("allowed_users").delete({ count: "exact" }).eq("id", id)
@@ -63,6 +97,7 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
           message: `Houve um erro ao remover o usuário. ${error.message}`
         }
       }
+      await getRooms()
 
       return {
         success: true,
@@ -130,7 +165,7 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   return (
-    <RoomsContext.Provider value={{ rooms, getRooms, addUser, removeUser, addRoom, loading, fetchError }}>
+    <RoomsContext.Provider value={{ rooms, getRooms, addUser, updateUser, removeUser, addRoom, loading, fetchError }}>
       {children}
     </RoomsContext.Provider>
   )
