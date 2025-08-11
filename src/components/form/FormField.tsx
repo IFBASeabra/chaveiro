@@ -40,7 +40,7 @@ const FormField: React.FC<FormFieldType> = ({
         placeholder={placeholder}
         type={type}
         required={required}
-        defaultValue={defaultValue}
+        defaultValue={defaultValue ?? undefined}
         {...props}
       />
       {
