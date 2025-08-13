@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useEffect, useState } from 'react'
 
 import RoomsContext from '@/contexts/RoomsContext'
@@ -112,11 +111,63 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+  const removeRoom = async (id: number) => {
+    try {
+      const { error } = await supabase.from("rooms").delete({ count: "exact" }).eq("id", id)
+      if (error) {
+        return {
+          success: false,
+          message: `Houve um erro ao remover o espaço. ${error.message}`
+        }
+      }
+      await getRooms()
+
+      return {
+        success: true,
+        message: "espaço removido com sucesso."
+      }
+    }
+    catch (e) {
+      return {
+        success: false,
+        message: `Houve um erro ao remover o espaço. ${JSON.stringify(e)}`
+      }
+    }
+  }
+
   const addRoom = async({name, number, type, location}: RoomSchemaType) => {
     console.log("Adding room")
     try {
       setLoading(true)
-      //@ts-ignore
+      const {error} = await supabase.from("rooms").insert({name, location, type, number })
+
+        if (error) {
+          return {
+            success: false,
+            message: error.message
+          }
+        }
+
+        return {
+          success: true,
+          message: "Espaço criado com sucesso"
+        }
+    } catch(e) {
+      return {
+        success: false,
+        message: `Houve um problema ao cadastrar o espaço. ${JSON.stringify(e)}`
+      }
+    } finally {
+      await getRooms()
+      setLoading(false)
+    }
+  }
+
+  const updateRoom = async({name, number, type, location}: RoomSchemaType) => {
+    console.log("Updating room")
+    try {
+      setLoading(true)
+
       const {error} = await supabase.from("rooms").insert({name, location, type, number })
 
         if (error) {
@@ -165,7 +216,7 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   return (
-    <RoomsContext.Provider value={{ rooms, getRooms, addUser, updateUser, removeUser, addRoom, loading, fetchError }}>
+    <RoomsContext.Provider value={{ rooms, getRooms, addUser, updateUser, removeUser, addRoom, updateRoom, removeRoom, loading, fetchError }}>
       {children}
     </RoomsContext.Provider>
   )
