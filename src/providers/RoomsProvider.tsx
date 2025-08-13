@@ -163,12 +163,12 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
-  const updateRoom = async({name, number, type, location}: RoomSchemaType) => {
+  const updateRoom = async({id, name, number, type, location}: Omit<Room, "allowed_users">) => {
     console.log("Updating room")
     try {
       setLoading(true)
 
-      const {error} = await supabase.from("rooms").insert({name, location, type, number })
+      const {error} = await supabase.from("rooms").update({name, location, type, number }).eq("id", id)
 
         if (error) {
           return {
@@ -179,12 +179,12 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
 
         return {
           success: true,
-          message: "Espaço criado com sucesso"
+          message: "Espaço atualizado com sucesso"
         }
     } catch(e) {
       return {
         success: false,
-        message: `Houve um problema ao cadastrar o espaço. ${JSON.stringify(e)}`
+        message: `Houve um problema ao atualizar o espaço. ${JSON.stringify(e)}`
       }
     } finally {
       await getRooms()

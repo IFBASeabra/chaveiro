@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { EditIcon, Info, InfoIcon, Trash2Icon } from 'lucide-react'
+import { EditIcon, Info, InfoIcon, LocationEdit, Trash2Icon, UserPlus2Icon } from 'lucide-react'
 
 import Container from '@/components/layout/container'
 import { Alert } from '@/components/ui/alert'
@@ -18,8 +18,10 @@ import AllowUserToRoom from '@/forms/allowUserToRoom'
 import EditAllowedUser from '@/forms/editAllowedUser'
 import RemoveAllowedUser from '@/forms/removeAllowedUser'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import EditRoom from '@/forms/editRoom'
+import RemoveRoom from '@/forms/removeRoom'
 
-type activeFormType = "newUser" | "editUser" | "removeUser" | undefined
+type activeFormType = "newUser" | "editUser" | "removeUser" | "editRoom" | "removeRoom" | undefined
 
 const Room = () => {
   const { id } = useParams()
@@ -37,9 +39,10 @@ const Room = () => {
   const ActiveForms = {
     "newUser": () => <AllowUserToRoom activeRoom={activeRoom!} close={close} />,
     "editUser": () => <EditAllowedUser userId={activeUser} activeRoom={activeRoom!} close={close} />,
-    "removeUser": () => <RemoveAllowedUser id={activeUser} activeRoom={activeRoom!} close={close} />
+    "editRoom": () => <EditRoom activeRoom={activeRoom!} close={close} />,
+    "removeUser": () => <RemoveAllowedUser id={activeUser} activeRoom={activeRoom!} close={close} />,
+    "removeRoom": () => <RemoveRoom activeRoom={activeRoom!} close={close} />
   }
-
 
   if (loading) {
     return <>Carregando...</>
@@ -83,9 +86,19 @@ const Room = () => {
             <h1 className="text-2xl font-semibold flex gap-2 items-center">
               <Badge className='text-2xl'>{activeRoom?.number}</Badge>{activeRoom?.name}
             </h1>
-            {session && <Button onClick={() => { setActiveForm("newUser") }}>
-              Adicionar usuário
-            </Button>}
+            {session &&
+            <div className="flex gap-4 items-center justify-end"> 
+              <Button onClick={() => { setActiveForm("editRoom") }} variant="teal">
+                <LocationEdit /> Editar Espaço
+              </Button>
+              <Button onClick={() => { setActiveForm("newUser") }} variant="blue">
+                <UserPlus2Icon /> Adicionar usuário
+              </Button>
+              <Button onClick={() => { setActiveForm("removeRoom") }} variant="destructive">
+                <Trash2Icon /> Remover Espaço
+              </Button>
+            </div>
+            }
           </div>
           {activeRoom.allowed_users?.length > 0 ?
 

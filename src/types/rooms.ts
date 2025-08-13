@@ -11,8 +11,10 @@ export interface RoomsContextType {
   getRooms: () => Promise<void>
   addUser: (roomId: number, user: string, valid_until?: string) => Promise<SupabaseResponse>
   updateUser: (id: number, user: string, valid_until?: string) => Promise<SupabaseResponse>
+  updateRoom: (data: Omit<Room, "allowed_users">) => Promise<SupabaseResponse>
   addRoom: (data: RoomSchemaType) => Promise<SupabaseResponse>
   removeUser: (id: number) => Promise<SupabaseResponse>
+  removeRoom: (id: number) => Promise<SupabaseResponse>
   loading: boolean
   fetchError: string
 }
