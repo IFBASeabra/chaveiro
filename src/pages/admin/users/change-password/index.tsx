@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Alert } from "@/components/ui/alert";
 import { Label } from "@radix-ui/react-label";
+import supabase from "@/lib/supabase";
 
 const ChangePassword = () => {
   const {
@@ -26,7 +27,7 @@ const ChangePassword = () => {
 
   const navigate = useNavigate();
 
-  const [loginError, setLoginError] = useState<string | null>(null);
+  const [changeError, setChangeError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
@@ -34,14 +35,30 @@ const ChangePassword = () => {
   const handleChangePassword = async (data: changePasswordSchemaType) => {
     setLoading(true);
     try {
-      const { success, error } = await login(data);
+      const { success, error } = await login({
+        password: data.password,
+        email: data.email,
+      });
       if (!success) {
         if (error) {
-          setLoginError("Erro ao alterar a senha. Verifique as credenciais e tente novamente.");
+          setChangeError(
+            "Erro ao alterar a senha. Verifique as credenciais e tente novamente."
+          );
         } else {
-          setLoginError("Houve um problema ao alterar a senha. Tente novamente em alguns instantes.");
+          setChangeError(
+            "Houve um problema ao alterar a senha. Tente novamente em alguns instantes."
+          );
         }
       } else {
+        const { error: updateError } = await supabase.auth.updateUser({
+          password: data.newPassword,
+        });
+
+        if (updateError) {
+          setChangeError("Erro ao alterar a senha. Tente novamente.");
+          return;
+        }
+
         navigate("/admin");
       }
     } catch (e) {
@@ -53,11 +70,29 @@ const ChangePassword = () => {
 
   return (
     <Container verticalAlign="justify-center">
-      <form className="flex flex-col justify-start items-start gap-4 w-full md:max-w-1/4 border-2 p-4 rounded-sm">
+      <form
+        className="flex flex-col justify-start items-start gap-4 w-full md:max-w-1/4 border-2 p-4 rounded-sm"
+        onSubmit={handleSubmit(handleChangePassword)}
+      >
         <h2 className="flex justify-center items-center w-full text-center text-xl gap-2 py-4">
           <LockKeyhole />
           Altere a sua senha
         </h2>
+        <Label htmlFor="password" className="text-sm ml-2 -mb-2 text-gray-600">
+          Email
+        </Label>
+        <FormField
+          id="password"
+          type="email"
+          placeholder="exemplo@exemplo.com"
+          {...register("email")}
+          error={errors?.email}
+          required={true}
+        />
+        <Label
+          htmlFor="new-password"
+          className="text-sm ml-2 -mb-2 text-gray-600"
+        ></Label>
         <Label htmlFor="password" className="text-sm ml-2 -mb-2 text-gray-600">
           Insira a sua senha
         </Label>
@@ -103,13 +138,13 @@ const ChangePassword = () => {
           className="w-full mb-4"
           disabled={loading}
         >
-          {loading ? "Aguarde..." : "Entrar"}
+          {loading ? "Aguarde..." : "Alterar"}
         </Button>
 
-        {loginError && (
+        {changeError && (
           <Alert variant="destructive">
             <InfoIcon />
-            {loginError}
+            {changeError}
           </Alert>
         )}
       </form>

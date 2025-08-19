@@ -20,6 +20,9 @@ export const loginSchema = registerSchema.omit({ confirm: true });
 
 export const changePasswordSchema = z
   .object({
+    email: z
+      .email({ message: "Informe um e-mail válido" })
+      .nonempty({ message: "Informe um e-mail válido" }),
     password: z
       .string()
       .min(8, { message: "As senhas contém pelo menos 8 dígitos" }),
