@@ -6,7 +6,7 @@ const Layout = () => {
   return (
     <>
     <Header />
-    <main className="flex flex-col">
+    <main className="flex flex-col mt-[68px]">
       <Outlet />
       <Toaster richColors />
     </main>

@@ -18,6 +18,8 @@ import Layout from './pages/layout';
 import './index.css'
 import RoomsProvider from './providers/RoomsProvider';
 import Room from './pages/room';
+import ImportRooms from './pages/admin/rooms/import';
+import RoomsLayout from './pages/admin/rooms/layout';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -36,9 +38,10 @@ createRoot(document.getElementById('root')!).render(
                   <Route index element={<User />} />
                   <Route path="new" element={<NewUser />} />
                 </Route>
-                <Route path="rooms" element={<Rooms />}>
+                <Route path="rooms" element={<RoomsLayout />}>
                   <Route index element={<Rooms />} />
                   <Route path="new" element={<NewRoom />} />
+                  <Route path="import" element={<ImportRooms />} />
                 </Route>
               </Route>
             </Route>

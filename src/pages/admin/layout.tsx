@@ -1,12 +1,15 @@
-import Container from '@/components/layout/container'
 import Loading from '@/components/layout/loading'
 import { useAuth } from '@/hooks/useAuth'
-import {  Outlet, useNavigate } from 'react-router'
+import {  Outlet, useLocation, useNavigate, useOutlet } from 'react-router'
 
 const AdminLayout = () => {
   const { session, loading } = useAuth()
   const navigate = useNavigate()
+    const location = useLocation();
+    const outlet = useOutlet()
 
+  console.log("outlet: ", outlet)
+  console.log("location: ", location)
   if (loading) {
     return <Loading />
   }
@@ -16,9 +19,7 @@ const AdminLayout = () => {
   }
 
   return (
-    <Container>
-      <Outlet />
-    </Container>
+    <Outlet />
   )
 }
 
