@@ -10,6 +10,8 @@ const Home = () => {
   const {rooms, fetchError, loading} = useRooms()
   const {session} = useAuth()
 
+  console.log('rooms: ', rooms)
+
   const roomList = useMemo(() => {
         return rooms?.reduce((acc, room) => {
           const loc = room.location || "unknown";

@@ -1,45 +1,35 @@
 import Logo from "@/assets/Logo"
-import { Button } from "@/components/ui/button"
 import {
   Sheet,
   SheetContent,
-  SheetHeader,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { useAuth } from "@/hooks/useAuth"
-import { LogInIcon, LogOutIcon, MenuIcon, UserIcon } from "lucide-react"
-import { NavLink } from "react-router"
+import { MenuIcon } from "lucide-react"
+
+import Menu from "./menu"
+import { useEffect, useState } from "react"
+import { useLocation } from "react-router"
 
 const Mobile = () => {
-  const { session, logout } = useAuth()
+  const [open, setOpen] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location]);
+
 
   return (
-    <header className="flex items-center justify-between gap-6 py-4 px-8 border">
+    <header className="flex items-center justify-between gap-6 py-4 px-8 border fixed top-0 bg-white w-full">
       <Logo />
-      {
-        session ? <Sheet>
-          <SheetTrigger>
-            <MenuIcon />
-          </SheetTrigger>
-          <SheetContent className="px-4 py-4">
-            <SheetHeader className="flex flex-row items-center gap-4 justify-start">
-              <UserIcon />
-              {session?.user.email}
-            </SheetHeader>
-            <nav className="flex flex-col gap-4">
-              <Button variant="destructive" onClick={logout}>
-                <LogOutIcon />
-                Sair
-              </Button>
-            </nav >
-          </SheetContent>
-        </Sheet> :
-          <NavLink to="/login" className="flex items-center gap-4">
-            <LogInIcon />
-            Login
-          </NavLink>
-      }
-
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger className="cursor-pointer">
+          <MenuIcon size={32}/>
+        </SheetTrigger>
+        <SheetContent className="px-4 py-4">
+          <Menu />
+        </SheetContent>
+      </Sheet>
     </header>
   )
 }
