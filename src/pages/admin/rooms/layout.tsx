@@ -1,11 +1,7 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import { Link, Outlet, useMatches } from "react-router"
+import { Link, Outlet } from "react-router"
 
 const RoomsLayout = () => {
-  const matches = useMatches()
-
-  console.log('matches: ', matches)
-
   return (
     <>
     <Breadcrumb className='mb-4 w-full py-4 px-20 bg-gray-100'>
