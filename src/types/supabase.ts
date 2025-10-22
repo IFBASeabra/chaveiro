@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -46,6 +46,48 @@ export type Database = {
           },
         ]
       }
+      reservations: {
+        Row: {
+          created_at: string
+          id: number
+          room_id: number | null
+          status: Database["public"]["Enums"]["status"] | null
+          updated_at: string | null
+          user_id: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          room_id?: number | null
+          status?: Database["public"]["Enums"]["status"] | null
+          updated_at?: string | null
+          user_id?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          room_id?: number | null
+          status?: Database["public"]["Enums"]["status"] | null
+          updated_at?: string | null
+          user_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rooms: {
         Row: {
           created_at: string
@@ -73,6 +115,72 @@ export type Database = {
         }
         Relationships: []
       }
+      user_rooms: {
+        Row: {
+          created_at: string
+          expires_in: number | null
+          id: number
+          room_id: number
+          status: string | null
+          user_id: number
+        }
+        Insert: {
+          created_at?: string
+          expires_in?: number | null
+          id?: number
+          room_id: number
+          status?: string | null
+          user_id: number
+        }
+        Update: {
+          created_at?: string
+          expires_in?: number | null
+          id?: number
+          room_id?: number
+          status?: string | null
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_rooms_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_rooms_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          register: string
+          type: Database["public"]["Enums"]["profile"]
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          register: string
+          type: Database["public"]["Enums"]["profile"]
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          register?: string
+          type?: Database["public"]["Enums"]["profile"]
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -82,6 +190,7 @@ export type Database = {
     }
     Enums: {
       location: "Prédio Principal" | "Prédio Anexo" | "Ginásio"
+      profile: "TAE" | "Docente" | "Estudante" | "Visitante"
       room_type:
         | "Laboratório"
         | "Sala de Aula"
@@ -89,6 +198,7 @@ export type Database = {
         | "Auditório"
         | "Administrativo"
         | "Outro"
+      status: "aberto" | "concluido"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -217,6 +327,7 @@ export const Constants = {
   public: {
     Enums: {
       location: ["Prédio Principal", "Prédio Anexo", "Ginásio"],
+      profile: ["TAE", "Docente", "Estudante", "Visitante"],
       room_type: [
         "Laboratório",
         "Sala de Aula",
@@ -225,6 +336,7 @@ export const Constants = {
         "Administrativo",
         "Outro",
       ],
+      status: ["aberto", "concluido"],
     },
   },
 } as const

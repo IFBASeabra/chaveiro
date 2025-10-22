@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
+import Papa from "papaparse";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useRooms } from "@/hooks/useRooms";
+import supabase from "@/lib/supabase";
+
+import type { Database } from "@/types/supabase";
+
 
 const ImportRooms = () => {
-  const [csvData, setCsvData] = useState<string[] | null>(null);
+  const [csvData, setCsvData] = useState<string[][] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { rooms } = useRooms()
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -33,7 +43,9 @@ const ImportRooms = () => {
         return;
       }
 
-      processFile(text);
+      const { data } = Papa.parse<string[]>(text, { skipEmptyLines: true });
+      setCsvData(data);
+      setIsLoading(false);
     };
 
     reader.onerror = () => {
@@ -44,17 +56,39 @@ const ImportRooms = () => {
     reader.readAsText(file);
   };
 
-  const processFile = (text: string) => {
-    const lines = text.split("\n");
+  const importData = async () => {
+    if (!csvData) return;
 
-    if (!lines) {
-      setError("Houve um problema durante o processamento do arquivo.");
-      return;
-    }
+    console.log('rooms: ', rooms)
 
-    setCsvData(lines);
-    setIsLoading(false);
-  };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const finalList = csvData.filter((csvItem: any) => {
+
+      if (csvItem.length < 4) return false;
+
+      const [number, , type, location] = csvItem;
+
+      const room = rooms?.find(
+        r =>
+          r.number === number &&
+          r.type === type &&
+          r.location === location
+      );
+
+      return !room;
+    });
+
+    const newRooms = finalList.map(listItem => (
+      {
+        number: listItem[0], 
+        name: listItem[1], 
+        location: listItem[3] as string as Database["public"]["Enums"]["location"], 
+        type: listItem[2] as string as Database["public"]["Enums"]["room_type"]
+      }
+    ))
+
+    await supabase.from("rooms").upsert(newRooms)
+  }
 
   useEffect(() => {
     if (!csvData) return
@@ -66,10 +100,10 @@ const ImportRooms = () => {
     <p>Carregando...</p>
   ) : (
     <section>
-      <div>
-        <form encType="multipart/form-data">
+      <div className="w-full mx-auto my-5 px-4 lg:px-0">
+        <form encType="multipart/form-data" className="max-w-1/3 mx-auto">
           <label htmlFor="file">Arquivo: (.csv)</label>
-          <input
+          <Input
             id="file"
             type="file"
             title="Enviar Planilha"
@@ -77,36 +111,41 @@ const ImportRooms = () => {
             onChange={handleFileUpload}
           />
         </form>
-        
+
         {error && <p>{error}</p>}
         {csvData && (
-          <div className="p-3 my-4 w-full h-96 overflow-y-auto border border-black">
-            <table className="">
-              <thead className="text-left">
-                <tr>
-                  <th>Número</th>
-                  <th>Sala</th>
-                  <th>Localização</th>
-                  <th>Tipo</th>
-                  <th>Autorizações</th>
-                </tr>
-              </thead>
-              {csvData.map((line, index) => {
-                const items = line.split(",");
-
-                return (
-                  <tr
-                    key={index}
-                    className="border-b-2 border-b-black"
-                  >
-                    {items.map((item, idx) => (
-                      <td key={`${item}-${idx}`}>{item}</td>
-                    ))}
+          <>
+            <div className="p-3 my-4 w-full lg:max-w-[75vw] mx-auto overflow-y-auto border border-black">
+              <table className="w-full">
+                <thead className="text-left">
+                  <tr>
+                    <th className="px-2">Número</th>
+                    <th className="px-2">Sala</th>
+                    <th className="px-2">Tipo</th>
+                    <th className="px-2">Localização</th>
                   </tr>
-                );
-              })}
-            </table>
-          </div>
+                </thead>
+                {csvData?.map((line, index) => {
+                  return (
+                    <tr
+                      key={index}
+                      className="border-b-2 border-b-black"
+                    >
+                      {line?.map((item, idx) => (
+                        <td className="px-2" key={`${item}-${idx}`}>{item}</td>
+                      ))}
+                    </tr>
+                  );
+                })}
+              </table>
+            </div>
+
+            <div className="w-full flex items-center justify-center mx-auto my-4">
+              <Button className="px-4" onClick={importData}>
+                Importar Dados
+              </Button>
+            </div>
+          </>
         )}
       </div>
     </section>

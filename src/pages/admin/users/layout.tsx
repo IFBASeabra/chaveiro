@@ -3,9 +3,7 @@ import { Outlet } from 'react-router'
 const UsersLayout = () => {
   return (
     <>
-  users
-          <Outlet />
-
+      <Outlet />
     </>
   )
 }

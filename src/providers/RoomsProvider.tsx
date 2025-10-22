@@ -192,18 +192,20 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+  const endReservation = async(id: number) => {
+    await supabase.from("reservations").update({status: "concluido"}).eq("id", id)
+    await getRooms()
+  }
+
   useEffect(() => {
     const getRooms = async () => {
       setLoading(true)
       try {
         const { data, error } = await fetchRooms()
-
         if (error) {
           setFetchError(`Houve um erro ao buscar as salas: ${error.message}`)
         }
-
         setRooms(data)
-
       } catch (e) {
         setFetchError(`Houve um erro ao buscar as salas: ${JSON.stringify(e)}`)
       } finally {
@@ -216,7 +218,7 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   return (
-    <RoomsContext.Provider value={{ rooms, getRooms, addUser, updateUser, removeUser, addRoom, updateRoom, removeRoom, loading, fetchError }}>
+    <RoomsContext.Provider value={{ rooms, getRooms, addUser, updateUser, removeUser, addRoom, updateRoom, removeRoom, loading, fetchError, endReservation }}>
       {children}
     </RoomsContext.Provider>
   )
