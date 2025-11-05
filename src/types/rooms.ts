@@ -24,16 +24,11 @@ export interface RoomsContextType {
 export interface Room {
   id: number
   name: string
-  location: Database["public"]["Enums"]["location"]
   number: string
   type: Database["public"]["Enums"]["room_type"]
-  allowed_users: {
-    id: number
-    user: string
-    valid_until?: string | null
-  }[]
+  location: Database["public"]["Enums"]["location"]
   user_rooms?: UserRooms[]
-  reservations?: Reservation[]
+  reservations?: Reservation[] | null
 }
 
 export interface Reservation {
@@ -42,7 +37,7 @@ export interface Reservation {
   room_id: number
   status: string
   created_at: string
-  updated_at: string
+  updated_at: string | null
   users?: {
     name: string
   }
@@ -52,7 +47,7 @@ export interface UserRooms {
   id: number
   room_id: number
   user_id: number
-  expires_in: string
+  expires_in?: number | null
   rooms?: Room
   users?: User
 }
@@ -60,7 +55,7 @@ export interface User {
   id: number
   name: string
   register: string
-  type: Database["public"]["Enums"]["profile"]
+  type?: Database["public"]["Enums"]["profile"]
   user_rooms?: UserRooms[]
   reservations?: Reservation[]
 }

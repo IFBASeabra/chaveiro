@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin: {
+        Row: {
+          admin_id: string | null
+          created_at: string
+          id: number
+          name: string | null
+        }
+        Insert: {
+          admin_id?: string | null
+          created_at?: string
+          id?: number
+          name?: string | null
+        }
+        Update: {
+          admin_id?: string | null
+          created_at?: string
+          id?: number
+          name?: string | null
+        }
+        Relationships: []
+      }
       allowed_users: {
         Row: {
           created_at: string
@@ -49,34 +70,54 @@ export type Database = {
       reservations: {
         Row: {
           created_at: string
+          created_by: number | null
           id: number
-          room_id: number | null
-          status: Database["public"]["Enums"]["status"] | null
+          room_id: number
+          status: Database["public"]["Enums"]["status"]
           updated_at: string | null
-          user_id: number | null
+          updated_by: number | null
+          user_id: number
         }
         Insert: {
           created_at?: string
+          created_by?: number | null
           id?: number
-          room_id?: number | null
-          status?: Database["public"]["Enums"]["status"] | null
+          room_id: number
+          status: Database["public"]["Enums"]["status"]
           updated_at?: string | null
-          user_id?: number | null
+          updated_by?: number | null
+          user_id: number
         }
         Update: {
           created_at?: string
+          created_by?: number | null
           id?: number
-          room_id?: number | null
-          status?: Database["public"]["Enums"]["status"] | null
+          room_id?: number
+          status?: Database["public"]["Enums"]["status"]
           updated_at?: string | null
-          user_id?: number | null
+          updated_by?: number | null
+          user_id?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "reservations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "admin"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "reservations_room_id_fkey"
             columns: ["room_id"]
             isOneToOne: false
             referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reservations_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "admin"
             referencedColumns: ["id"]
           },
           {
@@ -121,7 +162,6 @@ export type Database = {
           expires_in: number | null
           id: number
           room_id: number
-          status: string | null
           user_id: number
         }
         Insert: {
@@ -129,7 +169,6 @@ export type Database = {
           expires_in?: number | null
           id?: number
           room_id: number
-          status?: string | null
           user_id: number
         }
         Update: {
@@ -137,7 +176,6 @@ export type Database = {
           expires_in?: number | null
           id?: number
           room_id?: number
-          status?: string | null
           user_id?: number
         }
         Relationships: [
