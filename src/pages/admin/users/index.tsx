@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useRooms } from "@/hooks/useRooms"
 import { useUsers } from "@/hooks/useUsers"
 import type { Room, User } from "@/types/rooms"
-import { Edit2Icon, UserPlus2 } from "lucide-react"
+import { Edit2, EyeIcon, UserPlus2 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router"
 
@@ -78,11 +78,14 @@ const Users = () => {
                     <TableHead>
                       <p className="text-sm">Salas Autorizadas</p>
                     </TableHead>
+                    <TableHead>
+                      <p className="text-sm">Ações</p>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {
-                    users?.map((user: any) => (
+                    users?.map((user: User) => (
                       <TableRow key={user.id}>
                         <TableCell>
                           {user.name}
@@ -94,7 +97,14 @@ const Users = () => {
                           {user.type}
                         </TableCell>
                         <TableCell>
-                          <Button onClick={() => setUser({ ...user })}> <Edit2Icon />Editar</Button>
+                          <Button onClick={() => setUser({ ...user })} variant="primary">
+                            <EyeIcon />Ver Salas Autorizadas
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <Button onClick={() => setUser({ ...user })} variant="tertiary">
+                            <Edit2 />Editar Usuário
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))

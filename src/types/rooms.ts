@@ -15,7 +15,8 @@ export interface RoomsContextType {
   addRoom: (data: RoomSchemaType) => Promise<SupabaseResponse>
   removeUser: (id: number) => Promise<SupabaseResponse>
   removeRoom: (id: number) => Promise<SupabaseResponse>
-  endReservation: (id: number) => Promise<SupabaseResponse>
+  endReservation: (id: number) => Promise<void>
+  createReservation: (user: number, id: number) => Promise<void>
   loading: boolean
   fetchError: string
 }
@@ -31,6 +32,7 @@ export interface Room {
     user: string
     valid_until?: string | null
   }[]
+  user_rooms?: UserRooms[]
   reservations?: Reservation[]
 }
 
@@ -52,10 +54,12 @@ export interface UserRooms {
   user_id: number
   expires_in: string
   rooms?: Room
+  users?: User
 }
 export interface User {
   id: number
   name: string
+  register: string
   type: Database["public"]["Enums"]["profile"]
   user_rooms?: UserRooms[]
   reservations?: Reservation[]

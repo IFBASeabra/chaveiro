@@ -197,6 +197,11 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
     await getRooms()
   }
 
+  const createReservation = async(user: number, id: number) => {
+    await supabase.from("reservations").insert({user_id: user, room_id: id, status: "aberto"})
+    await getRooms()
+  }
+
   useEffect(() => {
     const getRooms = async () => {
       setLoading(true)
@@ -218,7 +223,7 @@ const RoomsProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   return (
-    <RoomsContext.Provider value={{ rooms, getRooms, addUser, updateUser, removeUser, addRoom, updateRoom, removeRoom, loading, fetchError, endReservation }}>
+    <RoomsContext.Provider value={{ rooms, getRooms, addUser, updateUser, removeUser, addRoom, updateRoom, removeRoom, loading, fetchError, endReservation, createReservation }}>
       {children}
     </RoomsContext.Provider>
   )

@@ -1,3 +1,7 @@
+
+import { HousePlus } from "lucide-react"
+import { useMemo, useState } from "react"
+import { Link } from "react-router"
 import Container from "@/components/layout/container"
 import Modal from "@/components/layout/modal"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
@@ -8,14 +12,13 @@ import { useAuth } from "@/hooks/useAuth"
 import { useRooms } from "@/hooks/useRooms"
 import type { Room } from "@/types/rooms"
 import { time } from "@/utils/timestamp"
-import { HousePlus } from "lucide-react"
-import { useMemo, useState } from "react"
-import { Link } from "react-router"
+import { ReservationList } from "@/components/form/ReservationList"
 
 const Home = () => {
-  const { rooms, fetchError, loading, endReservation } = useRooms()
+  const { rooms, fetchError, loading, endReservation, getRooms } = useRooms()
   const { session } = useAuth()
   const [room, setRoom] = useState<Room | null>(null)
+  const [showReservation, setShowReservation] = useState(false)
 
   const activeReservation = useMemo(() => {
     if (!room || !(room.reservations && room.reservations.length > 0)) return null
@@ -33,6 +36,8 @@ const Home = () => {
       return acc;
     }, {} as Record<string, typeof rooms>);
   }, [rooms])
+
+  console.log('rooms: ', rooms)
 
 
   if (fetchError) {
@@ -94,7 +99,7 @@ const Home = () => {
           e.preventDefault()
           setRoom(null)
         }}>
-          <Card className="p-10" onClick={(e) => { e.stopPropagation() }}>
+          <Card className="p-10 w-full max-w-[800px]" onClick={(e) => { e.stopPropagation() }}>
             <ul>
               <li>
                 <strong>Espaço: </strong>{room.name}
@@ -103,7 +108,7 @@ const Home = () => {
                 <strong>Status: </strong>{activeReservation && activeReservation.status === "aberto" ? "Reservado" : "Livre"}
               </li>
               {
-                activeReservation &&
+                activeReservation ?
                 <>
                   <li>
                     <strong>Reservado por: </strong>{activeReservation?.users?.name}
@@ -133,6 +138,14 @@ const Home = () => {
                     </AlertDialog>
                   </li>
                 </>
+                :
+                <div className="flex flex-col gap-2 mt-4">
+                  <Button variant="primary" onClick={() => setShowReservation(true)}>Registrar reserva</Button>
+                  {
+                    showReservation && 
+                    <ReservationList room={room} onEnd={async () => {await getRooms(); setShowReservation(false); setRoom(null);  }} />
+                  }
+                </div>
               }
             </ul>
           </Card>

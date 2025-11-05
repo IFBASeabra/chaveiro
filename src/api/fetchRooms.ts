@@ -9,10 +9,8 @@ return await supabase
     number,
     type,
     location,
-    allowed_users (
-      id,
-      user,
-      valid_until
+    user_rooms (
+      users(id, name, register)
     ),
     reservations (
       id,
@@ -22,5 +20,5 @@ return await supabase
       users(name)
     )`
   )
-  .order('created_at', { foreignTable: 'reservations', ascending: false })
+  .order('location', {ascending: true})
   .limit(1, { foreignTable: 'reservations' });}

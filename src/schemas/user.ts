@@ -1,3 +1,4 @@
+import { Constants, type Database } from '@/types/supabase'
 import * as z from 'zod'
 
 // Schema padrão para cadastro de usuários
@@ -18,9 +19,19 @@ export const allowedUserSchema = z.object({
   valid_until: z.string().optional()
 })
 
+export const userSchema = z.object({
+  name: z.string().regex(/[A-Z][a-z].* [A-Z][a-z].*/, {message: "Forneça nome e sobrenome"}),
+  register: z.string().regex(/[0-9].*/, {message: "Forneça a matrícula ou CPF"}),
+  type: z.enum(
+    Constants.public.Enums.profile as unknown as [Database["public"]["Enums"]["profile"], ...Database["public"]["Enums"]["profile"][]],
+    { message: "Selecione o tipo Usuário" }
+  ),
+})
+
 export type loginSchemaType = z.infer<typeof loginSchema>
 export type registerSchemaType = z.infer<typeof registerSchema>
 export type allowedUserType = z.infer<typeof allowedUserSchema>
+export type userSchemaType = z.infer<typeof userSchema>
 
 export  interface AllowedUser {
   id: number
