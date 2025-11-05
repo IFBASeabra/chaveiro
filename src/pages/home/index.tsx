@@ -13,6 +13,7 @@ import { useRooms } from "@/hooks/useRooms"
 import type { Room } from "@/types/rooms"
 import { time } from "@/utils/timestamp"
 import { ReservationList } from "@/components/form/ReservationList"
+import { Badge } from "@/components/ui/badge"
 
 const Home = () => {
   const { rooms, fetchError, loading, endReservation, getRooms } = useRooms()
@@ -62,21 +63,21 @@ const Home = () => {
           <Link to="/admin/rooms/new" className="flex gap-2"><HousePlus /> Nova Sala</Link>
         </div>
       }
-      <div className="flex flex-col w-full flex-wrap">
+      <div className="flex flex-col w-full flex-wrap gap-4">
         {
           roomList ?
             Object.entries(roomList)
               .map(
                 ([location, rooms]) =>
-                  <div className="py-2" key={location}>
+                  <div className="py-4 my-2 h-[max-content] box-border" key={location}>
                     <h2 className="text-2xl mb-6">{location}</h2>
-                    <div className="flex flex-wrap gap-4">
+                    <div className="grid grid-cols-2 md:flex md:flex-wrap  gap-4">
                       {rooms?.sort((a, b) => Number(a.number) - Number(b.number))?.map((room) =>
                         <button
                           key={room.id}
                           role="button"
                           onClick={() => { setRoom(room) }}
-                          className={`p-4 border-2 border-gray-200 flex flex-auto max-w-28 items-center justify-center cursor-pointer rounded-sm flex-col ${room.reservations?.[0]?.status === "aberto" ? "border-red-600" : "border-green-500"}`}
+                          className={`p-4 border-2 border-gray-200 md:max-w-32 flex flex-auto aspect-square items-center justify-center cursor-pointer rounded-sm flex-col ${room.reservations?.[0]?.status === "aberto" ? "border-red-600" : "border-green-500"}`}
                         >
                           <h3 className="text-xl font-bold">
                             {room.number}
@@ -99,15 +100,14 @@ const Home = () => {
           setRoom(null)
         }}>
           <Card className="p-10 w-full max-w-[800px]" onClick={(e) => { e.stopPropagation() }}>
-            <ul>
+            <ul className="flex flex-col gap-2">
               <li>
                 <strong>Espaço: </strong>{room.name}
               </li>
               <li>
-                <strong>Status: </strong>{activeReservation && activeReservation.status === "aberto" ? "Reservado" : "Livre"}
+                <strong>Status: </strong>{activeReservation && activeReservation.status === "aberto" ? <Badge variant="destructive">Reservado</Badge> : <Badge variant="free">Livre</Badge>}
               </li>
               {
-                session &&
                 <>
                   {
                     activeReservation ?
@@ -118,29 +118,31 @@ const Home = () => {
                         <li>
                           <strong>Reservado em: </strong>{time(activeReservation?.created_at)}
                         </li>
-                        <li>
-                          <AlertDialog>
-                            <AlertDialogTrigger>
-                              <Button variant={"destructive"}>Devolver</Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Deseja confirmar a devolução?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Essa ação não pode ser desfeita. Confirme apenas se a chave foi devidamente devolvida.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction onClick={confirmEnd} disabled={loading}>
-                                  {loading ? "Confirmando..." : "Confirmar"}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </li>
+                        {session &&
+                          <li>
+                            <AlertDialog>
+                              <AlertDialogTrigger>
+                                <Button variant={"destructive"}>Devolver</Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Deseja confirmar a devolução?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Essa ação não pode ser desfeita. Confirme apenas se a chave foi devidamente devolvida.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                  <AlertDialogAction onClick={confirmEnd} disabled={loading}>
+                                    {loading ? "Confirmando..." : "Confirmar"}
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </li>}
                       </>
                       :
+                      session &&
                       <div className="flex flex-col gap-2 mt-4">
                         <Button variant="primary" onClick={() => setShowReservation(true)}>Registrar reserva</Button>
                         {
