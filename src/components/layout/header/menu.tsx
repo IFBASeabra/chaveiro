@@ -27,7 +27,7 @@ const Menu = () => {
                 <Users2Icon />  Usuários
               </Button>
             </NavLink>
-            <div className="flex gap-2 justify-between items-center w-full">
+            <div className="flex flex-col md:flex-row gap-2 justify-between items-center w-full">
               <div className="flex gap-2 items-center">
                 <User2Icon />
                 {session.user.email}
