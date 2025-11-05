@@ -9,7 +9,7 @@ const Menu = () => {
 
   return (
     <nav className="flex items-center flex-col lg:justify-end lg:flex-row gap-6 px-8 h-full mt-8 lg:mt-0">
-      <NavLink to="/home" className="w-full lg:w-auto">
+      <NavLink to="/" className="w-full lg:w-auto">
         <Button variant={"outline"} className="w-full lg:w-auto">
           <HomeIcon size={18} /> Home
         </Button>
