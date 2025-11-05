@@ -39,7 +39,6 @@ const Home = () => {
 
   console.log('rooms: ', rooms)
 
-
   if (fetchError) {
 
     console.error('A página não pode ser carregada devido a um erro: ', fetchError)
@@ -108,44 +107,49 @@ const Home = () => {
                 <strong>Status: </strong>{activeReservation && activeReservation.status === "aberto" ? "Reservado" : "Livre"}
               </li>
               {
-                activeReservation ?
+                session &&
                 <>
-                  <li>
-                    <strong>Reservado por: </strong>{activeReservation?.users?.name}
-                  </li>
-                  <li>
-                    <strong>Reservado em: </strong>{time(activeReservation?.created_at)}
-                  </li>
-                  <li>
-                    <AlertDialog>
-                      <AlertDialogTrigger>
-                        <Button variant={"destructive"}>Devolver</Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Deseja confirmar a devolução?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Essa ação não pode ser desfeita. Confirme apenas se a chave foi devidamente devolvida.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                          <AlertDialogAction onClick={confirmEnd} disabled={loading}>
-                            {loading ? "Confirmando..." : "Confirmar"}
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </li>
-                </>
-                :
-                <div className="flex flex-col gap-2 mt-4">
-                  <Button variant="primary" onClick={() => setShowReservation(true)}>Registrar reserva</Button>
                   {
-                    showReservation && 
-                    <ReservationList room={room} onEnd={async () => {await getRooms(); setShowReservation(false); setRoom(null);  }} />
+                    activeReservation ?
+                      <>
+                        <li>
+                          <strong>Reservado por: </strong>{activeReservation?.users?.name}
+                        </li>
+                        <li>
+                          <strong>Reservado em: </strong>{time(activeReservation?.created_at)}
+                        </li>
+                        <li>
+                          <AlertDialog>
+                            <AlertDialogTrigger>
+                              <Button variant={"destructive"}>Devolver</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Deseja confirmar a devolução?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Essa ação não pode ser desfeita. Confirme apenas se a chave foi devidamente devolvida.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={confirmEnd} disabled={loading}>
+                                  {loading ? "Confirmando..." : "Confirmar"}
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </li>
+                      </>
+                      :
+                      <div className="flex flex-col gap-2 mt-4">
+                        <Button variant="primary" onClick={() => setShowReservation(true)}>Registrar reserva</Button>
+                        {
+                          showReservation &&
+                          <ReservationList room={room} onEnd={async () => { await getRooms(); setShowReservation(false); setRoom(null); }} />
+                        }
+                      </div>
                   }
-                </div>
+                </>
               }
             </ul>
           </Card>

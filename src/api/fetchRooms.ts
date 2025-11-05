@@ -26,6 +26,6 @@ export const fetchRooms = async () => {
       users(name)
     )`
     )
-    .order('location', { ascending: true })
+    .order('location', { ascending: false })
     .limit(1, { foreignTable: 'reservations' });
 }

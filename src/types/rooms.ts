@@ -27,11 +27,6 @@ export interface Room {
   number: string
   type: Database["public"]["Enums"]["room_type"]
   location: Database["public"]["Enums"]["location"]
-   allowed_users?: {
-    id: number
-    user: string
-    valid_until?: string | null
-  }[]
   user_rooms?: UserRooms[]
   reservations?: Reservation[] | null
 }

@@ -33,7 +33,7 @@ const Login = () => {
 
   useEffect(() => {
     if (session) {
-      window.location.href = "/admin"
+      window.location.href = "/home"
     }
   }, [session])
 
@@ -49,7 +49,7 @@ const Login = () => {
           setLoginError('Houve um problema com o login. Tente novamente em alguns instantes')
         }
       } else {
-        navigate("/admin")
+        navigate("/home")
       }
       
 
