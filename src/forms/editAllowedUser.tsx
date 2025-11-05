@@ -16,7 +16,7 @@ const EditAllowedUser = ({activeRoom, userId, close }: { activeRoom: Room, userI
   const [isTemp, setIsTemp] = useState(false)
 
   const activeUser: AllowedUser | undefined = useMemo(() => {
-    return activeRoom.allowed_users.find((user) => user.id === userId)
+    return activeRoom?.allowed_users?.find((user) => user.id === userId)
   }, [userId, activeRoom])
 
   useEffect(() => {

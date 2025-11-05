@@ -100,7 +100,7 @@ const Room = () => {
             </div>
             }
           </div>
-          {activeRoom.allowed_users?.length > 0 ?
+          {activeRoom?.allowed_users?.length && activeRoom?.allowed_users?.length > 0 ?
 
             <Table>
               <TableHeader className="text-md text-left text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 py-2">
