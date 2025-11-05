@@ -43,7 +43,7 @@ const Users = () => {
 
   useEffect(() => {
     if (user) {
-      const foundUser = users.find(u => u.id === user.id)
+      const foundUser = users.find((u: User) => u.id === user.id)
       setUser(foundUser)
     }
 
