@@ -3,7 +3,7 @@
   "start_url": "/",
   "icons": [
     {
-      "src": "/public/chaveiro.png",
+      "src": "/chaveiro.png",
       "sizes": "100x100"
     }
   ],
